@@ -14,10 +14,7 @@ const UserSchema = new mongoose.Schema({
     password:{
         type:String,
         required:true
-    },
-    avatar: {
-      type: String
-    },
+    }, 
     vcoin:{
         type:Number,
         required:true
@@ -27,4 +24,4 @@ const UserSchema = new mongoose.Schema({
         default:Date.now
     }
 });
-module.exports = mongoose.model('user', UserSchema);
+module.exports = mongoose.model('User', UserSchema);

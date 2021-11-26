@@ -1,9 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const gravatar = require("gravatar");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const config = require("config");
 const User = require("../../models/User");
 const Blog = require("../../models/Blog");
@@ -51,7 +48,6 @@ ipfsadd = async (
     // });
     // const metadataCid = await client.storeBlob(metadata);
     // const metadataUrl = "https://ipfs.io/ipfs/" + metadataCid;
-
     fs.unlink(originfile, (err) => {
       if (err) console.log(err);
     });
@@ -77,7 +73,6 @@ ipfsadd = async (
       let newvalue = Number(user.vcoin) + 1;
       user.vcoin = newvalue;
       await user.save();
-
       return true;
     } else return false;
   } catch (e) {
@@ -192,6 +187,16 @@ router.post("/myfeed", auth, async (req, res) => {
   try {
     const blogs = await Blog.find({creator: req.user.id}).sort({ date: -1 });
     res.json(blogs);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.post("/myfeed/assetcount", auth, async (req, res) => {
+  try {
+    const images = await Blog.count({creator: req.user.id, filetype:'image'});
+    const videos = await Blog.count({creator: req.user.id, filetype:'video'});
+    res.json({images,videos});
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

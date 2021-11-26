@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const PostSchema = new mongoose.Schema({
+const BlogSchema = new mongoose.Schema({
   creator: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -15,17 +15,24 @@ const PostSchema = new mongoose.Schema({
     type:String,
     required:true,
   },
+  replyTo: {
+    type: Schema.Types.ObjectId,
+    ref: 'Blog',
+  },
   likes: [
     {
       user: {
-        type: Schema.Types.ObjectId,
-      },
-    },
+        type: Schema.Types.ObjectId
+      }
+    }
   ],
-  shares: {
-    type: Array,
-    required: true,
-  },
+  reposts: [
+    {
+      user: {
+        type: Schema.Types.ObjectId
+      }
+    }
+  ],
   parentpost: {
     type: Number,
     required: true,
@@ -55,4 +62,4 @@ const PostSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-module.exports = mongoose.model("post", PostSchema);
+module.exports = mongoose.model("Blog", BlogSchema);

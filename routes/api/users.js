@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const User = require('../../models/User');
+const Profile = require('../../models/Profile');
 // import normalize from 'normalize-url';
 
 router.post(
@@ -31,8 +32,11 @@ router.post(
       
             user.password = await bcrypt.hash(password, salt);
       
-            await user.save();
-      
+            const newuser= await user.save();
+            profile = new Profile({
+              user:newuser._id
+            });
+            await profile.save();
             const payload = {
               user: {
                 id: user.id

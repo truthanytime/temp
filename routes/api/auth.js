@@ -31,7 +31,7 @@ router.post('/',
     }
     const {email, password} = req.body;
     try {
-      const user=await User.findOne({email});
+      const user=await User.findOne({email})
       if (!user) {
         return res
           .status(400)
@@ -39,8 +39,7 @@ router.post('/',
       }
       // checking if users password mathces
       const validpassword=await bcrypt.compare(password, user.password);
-      if(!validpassword) return res.status(400).send("Incorrect Password");
-
+      if(!validpassword) return res.status(400).send("Incorrect Password"); 
       const payload={
         user:{
           id:user.id
@@ -48,7 +47,9 @@ router.post('/',
       };
       jwt.sign(
         payload,config.get('jwtSecret'),{expiresIn:'2h'},(err,token)=>{
-          if(err) throw err;
+          if(err){
+            console.log(err);
+            throw err;}
           res.send({token,user});
         }
       )

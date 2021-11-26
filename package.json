@@ -41,6 +41,7 @@
     "nodemon": "^2.0.13",
     "normalize-url": "^7.0.2",
     "react-modal-slider": "^0.2.3",
+    "react-notifications": "^1.7.2",
     "serve-favicon": "^2.5.0",
     "stripe": "^8.186.1"
   },
