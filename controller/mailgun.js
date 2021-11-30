@@ -8,7 +8,7 @@ const mailGenerator = new MailGen({
   theme: 'salted',
   product: {
     name: 'Viavix App',
-    link: 'http://localhost:4000',
+    link: 'https://viavix.com',
     copyright: 'Copyright © 2021 Viavix. All rights reserved.',
   }
 });
@@ -26,7 +26,7 @@ const sendMail = (username, recipient, code) => {
         //   button: {
         //     color: '#33b5e5',
         //     text: 'Verify account',
-        //     link: 'http://localhost:4000/verify_account'
+        //     link: 'https://viavix.com/verify_account'
         //   }
         // }
       }
