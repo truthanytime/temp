@@ -33,6 +33,41 @@ const BlogSchema = new mongoose.Schema({
       }
     }
   ],
+  saveusers: [
+    {
+      user: {
+        type: Schema.Types.ObjectId
+      }
+    }
+  ],
+  reporters: [
+    {
+      user: {
+        type: Schema.Types.ObjectId
+      }
+    }
+  ],
+  downloads: [
+    {
+      user: {
+        type: Schema.Types.ObjectId
+      }
+    }
+  ],
+  views: [
+    {
+      user: {
+        type: Schema.Types.ObjectId
+      }
+    }
+  ],
+  shares: [
+    {
+      user: {
+        type: Schema.Types.ObjectId
+      }
+    }
+  ],
   parentpost: {
     type: Number,
     required: true,

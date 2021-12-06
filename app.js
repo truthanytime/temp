@@ -35,6 +35,7 @@ app.use('/api/reset', require('./routes/api/reset'));
 app.use('/api/otp', require('./routes/api/otp'));
 app.use('/api/blog', require('./routes/api/blog'));
 app.use('/api/profile', require('./routes/api/profile'));
+app.use('/api/hashtag', require('./routes/api/hashtag'));
 app.use('/api/create-payment-intent',require('./routes/api/stripepayment'));
 
 

@@ -34,7 +34,13 @@ router.post(
       
             const newuser= await user.save();
             profile = new Profile({
-              user:newuser._id
+              user:newuser._id,
+              name:"",
+              bio:"",
+              country:"",
+              city:"",
+              avatar:"https://via.placeholder.com/100/?text=Avatar",
+              backimg:"https://via.placeholder.com/250/?text=+"
             });
             await profile.save();
             const payload = {

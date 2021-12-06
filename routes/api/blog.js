@@ -6,6 +6,7 @@ const User = require("../../models/User");
 const Blog = require("../../models/Blog");
 const auth = require("../../middleware/auth");
 const checkObjectId = require("../../middleware/checkObjectId");
+const mongoose = require("mongoose");
 // import normalize from 'normalize-url';
 
 const imagemark = require("../../controller/imagemark");
@@ -176,7 +177,10 @@ router.post("/", auth, async (req, res, next) => {
 });
 router.get("/", auth, async (req, res) => {
   try {
-    const blogs = await Blog.find().sort({ date: -1 });
+    const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
+    const skey = req.query.skey ? req.query.skey : "";
+    console.log(skip,skey);
+    const blogs = await Blog.find({description:{$regex: skey}}).skip(skip).sort({ date: -1 }).limit(5);
     res.json(blogs);
   } catch (err) {
     console.error(err.message);
@@ -185,7 +189,104 @@ router.get("/", auth, async (req, res) => {
 });
 router.post("/myfeed", auth, async (req, res) => {
   try {
-    const blogs = await Blog.find({creator: req.user.id}).sort({ date: -1 });
+    const blogs = await Blog.find().sort({ date: -1 });
+    res.json(blogs);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.get("/:id", auth, checkObjectId("id"), async (req, res) => {
+  try {
+    const blogs = await Blog.find({_id : req.params.id}).sort({ date: -1 });
+    res.json(blogs);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.post("/mysave/", auth, async (req, res) => {
+  const skey = req.query.skey ? req.query.skey : "";
+  console.log(skey);
+  const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
+  try {
+    const blogs = await Blog.find({description:{$regex: skey}, saveusers:{$elemMatch:{user: req.user.id}}}, undefined, {skip, limit:5}).sort({ date: -1 });
+    res.json(blogs);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.post("/myfeed/:type/", auth, async (req, res) => {
+  const type = req.params.type;
+  const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
+  const skey = req.query.skey ? req.query.skey : "";
+  let blogs;
+  let userId = mongoose.Types.ObjectId(req.user.id);
+  try {
+    switch (type) {
+      case "picture":
+        blogs = await Blog.find({filetype : "image", creator : userId, description:{$regex: skey}}, undefined, {skip,limit:5}).sort({ date: -1 });
+        break;
+      case "popular":
+        blogs = await Blog.aggregate([
+          {$match: {creator: userId, description:{$regex: skey}}},
+          {$addFields: {likes_size: { $size: "$likes" }}},
+          {$addFields: {downloads_size: { $size: "$downloads" }}},
+          {$addFields: {views_size: { $size: "$views" }}},
+          {$addFields: {saves_size: { $size: "$saveusers" }}},
+          {$addFields:{ sort_order :{$add: ["$likes_size", "$downloads_size", "$views_size", "$saves_size"]} }},
+          {$skip: skip},
+          {$limit: 5},
+          {$sort: { sort_order: -1, date: -1}}
+        ]);
+        break;
+      case "earn":
+        blogs = await Blog.aggregate([
+          {$match: {creator: userId, description:{$regex: skey}}},
+          {$addFields: {downloads_size: { $size: "$downloads" }}},
+          {$match: {downloads_size: {$gt: 1}}},
+          {$skip: skip},
+          {$limit: 5},
+          {$sort: { downloads_size: -1, date: -1}}
+        ]);
+        break;
+      case "video":
+      default:
+        blogs = await Blog.find({filetype : "video", creator : userId, description:{$regex: skey}}, undefined, {skip,limit:5}).sort({ date: -1 });
+    }
+    res.json(blogs);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.post("/myfeeds/assetcount", auth, async (req, res) => {
+  try {
+    let userId = mongoose.Types.ObjectId(req.user.id);
+    const images = await Blog.count({creator: req.user.id, filetype:'image'});
+    const videos = await Blog.count({creator: req.user.id, filetype:'video'});
+    const downloads = await Blog.aggregate([
+      {$match: {creator: userId}},
+      { $addFields: {
+        downloads_size: { $size: "$downloads" }
+      } },
+      { $group: {
+        _id: null,
+        count: {
+            $sum: "$downloads_size"
+        }
+      } }
+    ]);
+    res.json({images,videos,downloads});
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.post("/mylike", auth, async (req, res) => {
+  try {
+    const blogs = await Blog.find({likes:{$elemMatch:{user: req.user.id}}}).sort({ date: -1 });
     res.json(blogs);
   } catch (err) {
     console.error(err.message);
@@ -193,16 +294,15 @@ router.post("/myfeed", auth, async (req, res) => {
   }
 });
 
-router.post("/myfeed/assetcount", auth, async (req, res) => {
+router.post('/byhashtag', auth, async (req, res) => {
   try {
-    const images = await Blog.count({creator: req.user.id, filetype:'image'});
-    const videos = await Blog.count({creator: req.user.id, filetype:'video'});
-    res.json({images,videos});
+    const blogs = await Blog.find( {description:{$regex: req.body.hashtag}} ).sort({ date: -1 });
+    res.json(blogs);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
   }
-});
+})
 router.put("/like/:id", auth, checkObjectId("id"), async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -217,7 +317,59 @@ router.put("/like/:id", auth, checkObjectId("id"), async (req, res) => {
 
     await blog.save();
 
-    return res.json(blog.likes);
+    return res.json(blog);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.put("/saveuser/:id", auth, checkObjectId("id"), async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    // Check if the blog has already been saved
+    if (blog.saveusers.some((saveuser) => saveuser.user.toString() === req.user.id)) {
+      // remove the save
+      blog.saveusers = blog.saveusers.filter(
+        ({ user }) => user.toString() != req.user.id
+      );
+    } else blog.saveusers.unshift({ user: req.user.id });
+    await blog.save();
+
+    return res.json(blog);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.put("/download/:id", auth, checkObjectId("id"), async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    // Check if the blog has already been downloaded
+    if (!blog.downloads.some((download) => download.user.toString() === req.user.id)) {
+      blog.downloads.unshift({ user: req.user.id });
+      await blog.save();
+      return res.json(blog.downloads);
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+router.put("/report/:id", auth, checkObjectId("id"), async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+
+    // Check if the blog has already been saved
+    if (!blog.reporters.some((reporter) => reporter.user.toString() === req.user.id)) 
+      // remove the save
+      blog.reporters.unshift({ user: req.user.id });
+
+    await blog.save();
+
+    return res.json(blog);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

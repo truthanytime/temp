@@ -28,11 +28,40 @@ router.get("/", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-router.post("/mylike", auth, async (req, res) => {
+router.post("/:id", auth, checkObjectId("id"), async (req, res) => {
   try {
-    var id = mongoose.Types.ObjectId(req.user.id);
-    const blogs = await Blog.find({likes:{$elemMatch:{user: id}}}).sort({ date: -1 });
-    res.json(blogs);
+    const profile = await Profile.findOne({user:req.params.id});
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.put("/follow/:id", auth, checkObjectId("id"), async (req, res) => {
+  try {
+    //selected user's follower field access
+    const profile = await Profile.findOne({user:req.params.id});
+
+    if (profile.followers.some((follower) => follower.user.toString() === req.user.id)) {
+      profile.followers = profile.followers.filter(
+        ({ user }) => user.toString() !== req.user.id
+      );
+    } else profile.followers.unshift({ user: req.user.id });
+
+    await profile.save();
+
+    //follwing user's following field access
+    const profile_my = await Profile.findOne({user:req.user.id});
+
+    if (profile_my.following.some((follow) => follow.user.toString() === req.params.id)) {
+      profile_my.following = profile_my.following.filter(
+        ({ user }) => user.toString() !== req.params.id
+      );
+    } else profile_my.following.unshift({ user: req.params.id });
+
+    await profile_my.save();
+
+    return res.json(Profile);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -42,40 +71,46 @@ router.post("/", auth, async (req, res, next) => {
   try {
     let profile = await Profile.findOne({user:req.user.id});
     if (profile) {
-      let avatar = req.files.avatar;
-      let backimage = req.files.backimage;
+      let avatar;
+      let backimage;
       let name = req.body.name;
       let city = req.body.city;
       let country = req.body.country;
       let bio = req.body.bio;
-      const avatarname = `${dirname}/public/avatar/` + req.user.id + `.jpg`;
-      const backimgname = `${dirname}/public/backimg/` + req.user.id + `.jpg`;
-      await avatar.mv(`${dirname}/public/${avatar.name}`, async (err) => {
-        if (err) {
-          return res.status(500).send(err);
-        }
-        const image = await resize(`${dirname}/public/${avatar.name}`, 50, 50);
-        await image.writeAsync(avatarname);
-        fs.unlink(`${dirname}/public/${avatar.name}`, (err) => {
-          if (err) console.log(err);
+      if(req.body.avatar==undefined){
+        avatar = req.files.avatar;
+        const avatarname = `${dirname}/client/avatar/` + req.user.id + `.jpg`;
+        await avatar.mv(`${dirname}/public/${avatar.name}`, async (err) => {
+          if (err) {
+            return res.status(500).send(err);
+          }
+          const image = await resize(`${dirname}/public/${avatar.name}`, 50, 50);
+          await image.writeAsync(avatarname);
+          fs.unlink(`${dirname}/public/${avatar.name}`, (err) => {
+            if (err) console.log(err);
+          });
         });
-      });
-      await backimage.mv(`${dirname}/public/${backimage.name}`, async (err) => {
-        if (err) {
-          return res.status(500).send(err);
-        }
-        const image = await resize(
-          `${dirname}/public/${backimage.name}`,
-          300,
-          100
-        );
-        await image.writeAsync(backimgname);
-        fs.unlink(`${dirname}/public/${backimage.name}`, (err) => {
-          if (err) console.log(err);
+        profile.avatar = "https://viavix.com/avatar/"+req.user.id+".jpg";
+      }
+      if(req.body.backimage==undefined){
+        backimage = req.files.backimage;
+        const backimgname = `${dirname}/client/backimg/` + req.user.id + `.jpg`;
+        await backimage.mv(`${dirname}/public/${backimage.name}`, async (err) => {
+          if (err) {
+            return res.status(500).send(err);
+          }
+          const image = await resize(
+            `${dirname}/public/${backimage.name}`,
+            300,
+            100
+          );
+          await image.writeAsync(backimgname);
+          fs.unlink(`${dirname}/public/${backimage.name}`, (err) => {
+            if (err) console.log(err);
+          });
         });
-      });
-      profile.avatar = "http://localhost:4000/avatar/"+req.user.id+".jpg";
-      profile.backimg = "http://localhost:4000/backimg/"+req.user.id+".jpg";
+        profile.backimg = "https://viavix.com/backimg/"+req.user.id+".jpg";
+      }
       profile.name = name;
       profile.bio = bio;
       profile.country = country;
