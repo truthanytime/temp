@@ -11,6 +11,10 @@ const BlogSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  phonemodel: {
+    type: String,
+    required: true,
+  },
   filetype: {
     type:String,
     required:true,
@@ -71,6 +75,10 @@ const BlogSchema = new mongoose.Schema({
   parentpost: {
     type: Number,
     required: true,
+  },  
+  thumb: {
+    type:String,
+    trim: true,
   },
   originmetaurl: {
     type: String,

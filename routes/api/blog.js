@@ -26,6 +26,7 @@ ipfsadd = async (
   desc,
   filetype,
   gpsoutput,
+  phonemodel,
   saleoption
 ) => {
   try {
@@ -36,58 +37,75 @@ ipfsadd = async (
 
     const markedfileCid = await client.storeBlob(new Blob([file2]));
     const markedfileUrl = "https://ipfs.io/ipfs/" + markedfileCid;
-
-    // const obj = {
-    //   name: "Viavix",
-    //   Description: desc,
-    //   external_url: markedfileUrl,
-    //   originfileUrl: originfileUrl
-    // };
-
-    // const metadata = new Blob([JSON.stringify(obj)], {
-    //   type: "application/json",
-    // });
-    // const metadataCid = await client.storeBlob(metadata);
-    // const metadataUrl = "https://ipfs.io/ipfs/" + metadataCid;
-    fs.unlink(originfile, (err) => {
-      if (err) console.log(err);
-    });
-    fs.unlink(markedfile, (err) => {
-      if (err) console.log(err);
-    });
     const blog = await Blog.findOne({ originmetaurl: originfileUrl });
+    const thumbnailname = creatorid+''+Date.now()+'.png';
+    if(filetype=="video"){  
+      await takescreenshot(markedfile, thumbnailname);
+    }
+    var thumb = 'https://viavix.com/client/thumbs/' +thumbnailname;
+    
     if (!blog) {
       const newBlog = new Blog({
         creator: creatorid,
         description: desc,
         filetype: filetype,
         parentpost: 0,
+        thumb:thumb,
         originmetaurl: originfileUrl,
         markedmetaurl: markedfileUrl,
         price: saleoption,
         lat: gpsoutput.latitude,
         lng: gpsoutput.longitude,
+        phonemodel: phonemodel
       });
       await newBlog.save();
 
       const user = await User.findOne({ _id: creatorid });
       let newvalue = Number(user.vcoin) + 1;
       user.vcoin = newvalue;
-      await user.save();
+      await user.save();      
+
+      fs.unlink(originfile, (err) => {
+        if (err) console.log(err);
+      });
+      fs.unlink(markedfile, (err) => {
+        if (err) console.log(err);
+      });
       return true;
     } else return false;
   } catch (e) {
     return "error";
   }
 };
-
-videomark = (file) => {
+takescreenshot = (file, thumbnailname) =>{
   return new Promise((resolve, reject) => {
     ffmpeg(file)
-      .input(`${dirname}/public/output_2400x2400.png`)
-      .complexFilter("overlay=x=(main_w)/10:y=(main_h)/2")
-      .videoCodec("libx264")
-      .audioCodec("libmp3lame")
+    .on('filenames', function(filenames) {
+      console.log('screenshots are ' + filenames.join(', '));   
+    })
+    .on('end', function() {
+      console.log('screenshots were saved');
+      return resolve();
+    })
+    .on('error', function(err) {
+      console.log('an error happened: ' + err.message);
+      return reject(err);
+    })
+    .takeScreenshots({ count: 1, timemarks: [ '00:00:01.000' ], filename: thumbnailname, size: '320x210' }, "client/thumbs/");
+  });
+}
+videomark = (file) => {  
+  return new Promise((resolve, reject) => {
+    ffmpeg(file)
+      .input(`${dirname}/public/mark/video1995312mark.png`)        
+      .complexFilter([
+        'scale=320:210[rescaled]',
+        {
+            filter: 'overlay', options: {x: 30,y:120},
+            inputs: 'rescaled', outputs: 'output'
+        },
+      ], 'output')
+      .outputOptions(['-map 0:a', '-c:a aac'])
       .save(`${dirname}/public/21vixresult.mp4`)
       .on("error", function (err) {
         console.log("An error occurred: " + err.message);
@@ -99,7 +117,7 @@ videomark = (file) => {
   });
 };
 dirname = process.cwd();
-const LOGO = `${dirname}/public/mark.png`;
+const LOGO = `${dirname}/public/mark/image1995312mark.png`;
 router.post("/", auth, async (req, res, next) => {
   let mediafile = req.files.file;
   mediafile.mv(`${dirname}/public/${req.files.file.name}`, async (err) => {
@@ -120,6 +138,8 @@ router.post("/", auth, async (req, res, next) => {
             var index = 0;
             var temp = "";
             var gpsoutput = {};
+            var phonemodel=metadata.format.tags["com.apple.quicktime.model"];
+
             for (var i = 0; i < meta.length; i++) {
               if (meta[i] == "+" || meta[i] == "-") {
                 if (index == 1) {
@@ -139,6 +159,7 @@ router.post("/", auth, async (req, res, next) => {
               req.body.desc,
               "video",
               gpsoutput,
+              phonemodel,
               req.body.saleoption
             ).then((metadataUrl) => {
               if (metadataUrl === false) res.send("existing");
@@ -157,6 +178,8 @@ router.post("/", auth, async (req, res, next) => {
           `${dirname}/public/${req.files.file.name}`,
           LOGO
         );
+        var meta = await exifr.parse(file1);
+
         await image.writeAsync(`${dirname}/public/21vixresult.jpg`);
         metadataUrl = ipfsadd(
           `${dirname}/public/${req.files.file.name}`,
@@ -165,6 +188,7 @@ router.post("/", auth, async (req, res, next) => {
           req.body.desc,
           "image",
           gpsoutput,
+          meta.Model,
           req.body.saleoption
         ).then((metadataUrl) => {
           if (metadataUrl === false) res.send("existing");
@@ -178,9 +202,22 @@ router.post("/", auth, async (req, res, next) => {
 router.get("/", auth, async (req, res) => {
   try {
     const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
-    const skey = req.query.skey ? req.query.skey : "";
-    console.log(skip,skey);
-    const blogs = await Blog.find({description:{$regex: skey}}).skip(skip).sort({ date: -1 }).limit(5);
+    let skey;
+    if(req.query.tag)
+      skey = "#" + req.query.tag;
+    else
+      skey = req.query.skey ? req.query.skey : "";
+
+    let blogs;
+    if(skey.search('@')==0){
+      let user_key = skey.replace("@","");
+      const search_users = await User.find({name:{$regex: user_key}});
+      let creators = search_users.map(item => {
+        return item._id;
+      });
+      blogs = await Blog.find({creator: {$in:creators}}).skip(skip).sort({ date: -1 }).limit(5);
+    }else
+      blogs = await Blog.find({description:{$regex: skey}}).skip(skip).sort({ date: -1 }).limit(5);
     res.json(blogs);
   } catch (err) {
     console.error(err.message);
@@ -188,8 +225,17 @@ router.get("/", auth, async (req, res) => {
   }
 });
 router.post("/myfeed", auth, async (req, res) => {
+  const followinglist = req.body.myfollowing;
+  const id = req.body.id;
+  let followingusers = followinglist.map(follwing => {
+    return follwing.user;
+  });
   try {
-    const blogs = await Blog.find().sort({ date: -1 });
+    let blogs;
+    if(id == undefined)
+      blogs = await Blog.find({$or:[{creator: req.user.id}, {creator: {$in:followingusers}}]}).sort({ date: -1 });
+    else
+      blogs = await Blog.find({_id:id}).sort({ date: -1 });
     res.json(blogs);
   } catch (err) {
     console.error(err.message);
@@ -207,7 +253,6 @@ router.get("/:id", auth, checkObjectId("id"), async (req, res) => {
 });
 router.post("/mysave/", auth, async (req, res) => {
   const skey = req.query.skey ? req.query.skey : "";
-  console.log(skey);
   const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
   try {
     const blogs = await Blog.find({description:{$regex: skey}, saveusers:{$elemMatch:{user: req.user.id}}}, undefined, {skip, limit:5}).sort({ date: -1 });
@@ -302,7 +347,22 @@ router.post('/byhashtag', auth, async (req, res) => {
     console.error(err.message);
     res.status(500).send("Server Error");
   }
-})
+});
+router.put("/edit/:id", auth, async (req, res) => {
+  console.log(req.params.id);
+  console.log(req.body.description);
+  let blog_id = mongoose.Types.ObjectId(req.params.id);
+    Blog.findByIdAndUpdate(blog_id,{description: req.body.description}, function(err, result){
+
+      if(err){
+          res.send(err)
+      }
+      else{
+          res.send(result)
+      }
+
+  })
+});
 router.put("/like/:id", auth, checkObjectId("id"), async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);

@@ -5,8 +5,8 @@ exports.main = async (file,LOGO) => {
     Jimp.read(file),
     Jimp.read(LOGO)
   ]);
-  image.resize(400,300);
-  logo.resize(image.bitmap.width / 10, Jimp.AUTO);
+  image.resize(400,260);
+  logo.resize(image.bitmap.width / 4, Jimp.AUTO);
   const X=image.bitmap.width/20; 
   const Y=image.bitmap.height/2;
 

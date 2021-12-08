@@ -17,7 +17,6 @@ resize = async (file, width, height) => {
 };
 
 dirname = process.cwd();
-const LOGO = `${dirname}/public/mark.png`;
 
 router.get("/", auth, async (req, res) => {
   try {
