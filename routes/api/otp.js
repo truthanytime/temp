@@ -8,7 +8,10 @@ router.post('/',  (req, res)=> {
       if (sent!="") {
         res.send("success");
       }
+      else res.send('fail');
+      console.log('here fail');
     } catch (error) {
+      console.log('here error');
       return res.status(500).send(error.message);
     }
 });

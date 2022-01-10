@@ -1,15 +1,15 @@
 const MailGen = require('mailgen');
 const mailgun = require("mailgun-js");
-const DOMAIN = "mail.viavix.com";
-const mg = mailgun({apiKey: "as", domain: DOMAIN});
+const DOMAIN = "mail.troo.com";
+const mg = mailgun({apiKey: "a", domain: DOMAIN});
 require('dotenv').config();
 
 const mailGenerator = new MailGen({
   theme: 'salted',
   product: {
-    name: 'Viavix App',
+    name: 'troo App',
     link: 'https://viavix.com',
-    copyright: 'Copyright © 2021 Viavix. All rights reserved.',
+    copyright: 'Copyright © 2021 troo. All rights reserved.',
   }
 });
 const sendMail = (username, recipient, code) => {
@@ -17,9 +17,9 @@ const sendMail = (username, recipient, code) => {
     const email = {
       body: {
         greeting: 'Dear',
-        // signature: ['Best Regards','\nViavix Support Team'],
+        // signature: ['Best Regards','\ntroo Support Team'],
         name: username,
-        intro: ['Welcome to email verification!', 'To complete SignUp at Viavix, please enter this code:',code],
+        intro: ['Welcome to email verification!', 'To complete SignUp at troo, please enter this code:',code],
         // outro: ['Need help, or have questions?', 'Just reply to this email, we\'d love to help.'],
         // action: {
         //   instructions: 'You can verify your account to click the button below',
@@ -34,21 +34,24 @@ const sendMail = (username, recipient, code) => {
     const emailTemplate = mailGenerator.generate(email);
     require('fs').writeFileSync('preview.html', emailTemplate, 'utf8');
     const data =  {
-        from: "Viavix <info@viavix.com>",
+        from: "troo <info@troo.com>",
         to: recipient,
-        subject: 'SignUp at Viavix',
+        subject: 'SignUp at troo',
         html: emailTemplate,
     };
     mg.messages().send(data, function (error, body) {
         if (error) {
-            return;
+          console.log('mail sending failed:', error);
+            return '';
         }
         else {
+          console.log('mail sending success');
             return body.id;
         }
     });
   } catch (error) {
     throw new Error(error.message);
+    return '';
   }
 }
 

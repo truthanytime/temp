@@ -10,6 +10,18 @@ const mongoose = require("mongoose");
 // import normalize from 'normalize-url';
 
 const imagemark = require("../../controller/imagemark");
+// const geocoder = require('./geocode');
+
+const NodeGeocoder = require('node-geocoder');
+
+const options = {
+  provider: 'google',
+  apiKey: 'AIzaSyCAa8ZgPpTBMcCV7lrNJXvE70JoRs9Wl8I', // for Mapquest, OpenCage, Google Premier
+  formatter: null // 'gpx', 'string', ...
+};
+
+const geocoder = NodeGeocoder(options);
+
 const exifr = require("exifr");
 const { NFTStorage, Blob } = require("nft.storage");
 const client = new NFTStorage({
@@ -42,8 +54,10 @@ ipfsadd = async (
     if(filetype=="video"){  
       await takescreenshot(markedfile, thumbnailname);
     }
-    var thumb = 'https://viavix.com/client/thumbs/' +thumbnailname;
-    
+    var thumb = 'https://viavix.com/thumbs/' +thumbnailname;
+    const address = await geocoder.reverse({lat:gpsoutput.latitude, lon:gpsoutput.longitude});
+    console.log("geoaddress", address[0].formattedAddress);
+
     if (!blog) {
       const newBlog = new Blog({
         creator: creatorid,
@@ -56,6 +70,7 @@ ipfsadd = async (
         price: saleoption,
         lat: gpsoutput.latitude,
         lng: gpsoutput.longitude,
+        address: address[0].formattedAddress,
         phonemodel: phonemodel
       });
       await newBlog.save();
@@ -72,8 +87,22 @@ ipfsadd = async (
         if (err) console.log(err);
       });
       return true;
-    } else return false;
+    } else{ 
+      fs.unlink(originfile, (err) => {
+        if (err) console.log(err);
+      });
+      fs.unlink(markedfile, (err) => {
+        if (err) console.log(err);
+      });
+      return false;
+    }
   } catch (e) {
+    fs.unlink(originfile, (err) => {
+        if (err) console.log(err);
+      });
+      fs.unlink(markedfile, (err) => {
+        if (err) console.log(err);
+      });
     return "error";
   }
 };
@@ -138,8 +167,17 @@ router.post("/", auth, async (req, res, next) => {
             var index = 0;
             var temp = "";
             var gpsoutput = {};
-            var phonemodel=metadata.format.tags["com.apple.quicktime.model"];
-
+            var model=metadata.format.tags["com.apple.quicktime.model"];                
+            var spaceindex=0;
+            var phonemodel='';
+            for(var i=0;i<model.length;i++){
+              if(model[i]==' '){
+                if(spaceindex==1) break;
+                spaceindex++;
+              }
+              phonemodel=phonemodel+model[i];
+            }
+            console.log("model", phonemodel);
             for (var i = 0; i < meta.length; i++) {
               if (meta[i] == "+" || meta[i] == "-") {
                 if (index == 1) {
@@ -179,7 +217,16 @@ router.post("/", auth, async (req, res, next) => {
           LOGO
         );
         var meta = await exifr.parse(file1);
-
+        var spaceindex=0;
+        var phonemodel='';
+        for(var i=0;i<meta.Model.length;i++){
+          if(meta.Model[i]==' '){
+            if(spaceindex==1) break;
+            spaceindex++;
+          }
+          phonemodel=phonemodel+meta.Model[i];
+        }
+        console.log("phonemodel",phonemodel);
         await image.writeAsync(`${dirname}/public/21vixresult.jpg`);
         metadataUrl = ipfsadd(
           `${dirname}/public/${req.files.file.name}`,
@@ -188,12 +235,12 @@ router.post("/", auth, async (req, res, next) => {
           req.body.desc,
           "image",
           gpsoutput,
-          meta.Model,
+          phonemodel,
           req.body.saleoption
         ).then((metadataUrl) => {
           if (metadataUrl === false) res.send("existing");
-          else if (metadataUrl === "error") res.send("failure");
-          else res.send("success");
+          else if (metadataUrl === true) res.send("success");
+          else res.send("failure");
         });
       }
     }
