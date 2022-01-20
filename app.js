@@ -23,8 +23,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({secret:'angelkey',resave: false,saveUninitialized: true,  cookie:{maxAge:60000}}));
 app.use(fileUpload());
-const workpath=__dirname + '/public';
-app.use('/public', express.static(workpath));
+// const workpath=__dirname + '/public';
+// app.use('/public', express.static(workpath));
 
 
 app.use('/api/auth',require('./routes/api/auth'));
@@ -40,10 +40,10 @@ app.use('/api/create-payment-intent',require('./routes/api/stripepayment'));
 
 
 // Serve frontend built
-app.use(express.static(__dirname + '/public'))
+app.use(express.static('public'))
 
 app.get('*', (req, res) => {
-  res.sendFile(__dirname + '/client/build/index.html')
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 })
 
 // Serve static assets in production
@@ -69,5 +69,6 @@ if (process.env.NODE_ENV === 'production') {
 
 const PORT = 4000;
 app.listen(PORT, async() => {
+  console.log('basic dir', __dirname);
   console.log(`Server started on port ${PORT}`);
 });

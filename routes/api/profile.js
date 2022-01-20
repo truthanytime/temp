@@ -67,6 +67,7 @@ router.put("/follow/:id", auth, checkObjectId("id"), async (req, res) => {
   }
 });
 router.post("/", auth, async (req, res, next) => {
+  console.log('dirname', dirname);
   try {
     let profile = await Profile.findOne({user:req.user.id});
     if (profile) {
@@ -78,23 +79,23 @@ router.post("/", auth, async (req, res, next) => {
       let bio = req.body.bio;
       if(req.body.avatar==undefined){
         avatar = req.files.avatar;
-        const avatarname = `${dirname}/client/avatar/` + req.user.id + `.jpg`;
-        await avatar.mv(`${dirname}/public/${avatar.name}`, async (err) => {
+        const avatarname = `${dirname}/public/avatar/` + req.user.id + `.jpg`;
+        await avatar.mv(`${dirname}/public/avatar/${avatar.name}`, async (err) => {
           if (err) {
             return res.status(500).send(err);
           }
-          const image = await resize(`${dirname}/public/${avatar.name}`, 50, 50);
+          const image = await resize(`${dirname}/public/avatar/${avatar.name}`, 50, 50);
           await image.writeAsync(avatarname);
-          fs.unlink(`${dirname}/public/${avatar.name}`, (err) => {
+          fs.unlink(`${dirname}/public/avatar/${avatar.name}`, (err) => {
             if (err) console.log(err);
           });
         });
-        profile.avatar = "https://viavix.com/avatar/"+req.user.id+".jpg";
+        profile.avatar = "/avatar/"+req.user.id+".jpg";
       }
       if(req.body.backimage==undefined){
         backimage = req.files.backimage;
-        const backimgname = `${dirname}/client/backimg/` + req.user.id + `.jpg`;
-        await backimage.mv(`${dirname}/public/${backimage.name}`, async (err) => {
+        const backimgname = `${dirname}/public/backimg/` + req.user.id + `.jpg`;
+        await backimage.mv(`${dirname}/public/backimg/${backimage.name}`, async (err) => {
           if (err) {
             return res.status(500).send(err);
           }
@@ -104,11 +105,11 @@ router.post("/", auth, async (req, res, next) => {
             100
           );
           await image.writeAsync(backimgname);
-          fs.unlink(`${dirname}/public/${backimage.name}`, (err) => {
+          fs.unlink(`${dirname}/public/backimg/${backimage.name}`, (err) => {
             if (err) console.log(err);
           });
         });
-        profile.backimg = "https://viavix.com/backimg/"+req.user.id+".jpg";
+        profile.backimg = "https://troo.live/backimg/"+req.user.id+".jpg";
       }
       profile.name = name;
       profile.bio = bio;

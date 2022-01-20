@@ -1,6 +1,6 @@
 const MailGen = require('mailgen');
 const mailgun = require("mailgun-js");
-const DOMAIN = "mail.viavix.com";
+const DOMAIN = "mail.troo.live";
 const mg = mailgun({apiKey: "as", domain: DOMAIN});
 require('dotenv').config();
 
@@ -8,7 +8,7 @@ const mailGenerator = new MailGen({
   theme: 'salted',
   product: {
     name: 'Troo App',
-    link: 'https://viavix.com',
+    link: 'https://troo.live',
     copyright: 'Copyright © 2021 troo. All rights reserved.',
   }
 });
@@ -26,7 +26,7 @@ const sendMail = (username, recipient, code) => {
         //   button: {
         //     color: '#33b5e5',
         //     text: 'Verify account',
-        //     link: 'https://viavix.com/verify_account'
+        //     link: 'https://troo.live/verify_account'
         //   }
         // }
       }
@@ -34,7 +34,7 @@ const sendMail = (username, recipient, code) => {
     const emailTemplate = mailGenerator.generate(email);
     require('fs').writeFileSync('preview.html', emailTemplate, 'utf8');
     const data =  {
-        from: "Troo <info@viavix.com>",
+        from: "Troo <info@troo.live>",
         to: recipient,
         subject: 'SignUp at Troo',
         html: emailTemplate,

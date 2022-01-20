@@ -16,7 +16,7 @@ const NodeGeocoder = require('node-geocoder');
 
 const options = {
   provider: 'google',
-  apiKey: '', // for Mapquest, OpenCage, Google Premier
+  apiKey: 'AIzaSyCAa8ZgPpTBMcCV7lrNJXvE70JoRs9Wl8I', // for Mapquest, OpenCage, Google Premier
   formatter: null // 'gpx', 'string', ...
 };
 
@@ -54,7 +54,7 @@ ipfsadd = async (
     if(filetype=="video"){  
       await takescreenshot(markedfile, thumbnailname);
     }
-    var thumb = 'http://localhost:4000/thumbs/' +thumbnailname;
+    var thumb = 'https://troo.live/thumbs/' +thumbnailname;
     const address = await geocoder.reverse({lat:gpsoutput.latitude, lon:gpsoutput.longitude});
     console.log("geoaddress", address[0].formattedAddress);
 
