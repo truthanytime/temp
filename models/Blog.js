@@ -11,13 +11,17 @@ const BlogSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  hideshow: {
+    type: String,
+    required: true,
+  },
   phonemodel: {
     type: String,
     required: true,
   },
   filetype: {
-    type:String,
-    required:true,
+    type: String,
+    required: true,
   },
   replyTo: {
     type: Schema.Types.ObjectId,
@@ -75,9 +79,9 @@ const BlogSchema = new mongoose.Schema({
   parentpost: {
     type: Number,
     required: true,
-  },  
+  },
   thumb: {
-    type:String,
+    type: String,
     trim: true,
   },
   originmetaurl: {
@@ -107,6 +111,6 @@ const BlogSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now,
-  },
+  }
 });
 module.exports = mongoose.model("Blog", BlogSchema);

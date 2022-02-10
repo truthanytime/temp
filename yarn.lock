@@ -783,9 +783,9 @@
   "version" "5.3.1"
 
 "camelcase@^6.2.0":
-  "integrity" "sha512-c7wVvbw3f37nuobQNtgsgG9POC9qMbNuMQmTCqZv23b6MIz0fcYpBiOlv9gEN/hdLdnZTDQhg6e9Dq5M1vKvfg=="
-  "resolved" "https://registry.npmjs.org/camelcase/-/camelcase-6.2.0.tgz"
-  "version" "6.2.0"
+  "integrity" "sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA=="
+  "resolved" "https://registry.npmjs.org/camelcase/-/camelcase-6.3.0.tgz"
+  "version" "6.3.0"
 
 "carbites@^1.0.6":
   "integrity" "sha512-dS9IQvnrb5VIRvSTNz5Ff+mB9d2MFfi5mojtJi7Rlss79VeF190jr0sZdA7eW0CGHotvHkZaWuM6wgfD9PEFRg=="
@@ -861,10 +861,10 @@
     "parse5-htmlparser2-tree-adapter" "^6.0.1"
     "tslib" "^2.2.0"
 
-"chokidar@^3.2.2":
-  "integrity" "sha512-ekGhOnNVPgT77r4K/U3GDhu+FQ2S8TnK/s2KbIGXi0SZWuwkZ2QNyfWdZW+TVfn84DpEP7rLeCt2UI6bJ8GwbQ=="
-  "resolved" "https://registry.npmjs.org/chokidar/-/chokidar-3.5.2.tgz"
-  "version" "3.5.2"
+"chokidar@^3.5.2":
+  "integrity" "sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw=="
+  "resolved" "https://registry.npmjs.org/chokidar/-/chokidar-3.5.3.tgz"
+  "version" "3.5.3"
   dependencies:
     "anymatch" "~3.1.2"
     "braces" "~3.0.2"
@@ -1172,7 +1172,7 @@
   dependencies:
     "ms" "^2.1.1"
 
-"debug@^3.2.6":
+"debug@^3.2.7":
   "integrity" "sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ=="
   "resolved" "https://registry.npmjs.org/debug/-/debug-3.2.7.tgz"
   "version" "3.2.7"
@@ -1873,9 +1873,9 @@
     "url-parse-lax" "^3.0.0"
 
 "graceful-fs@^4.1.2":
-  "integrity" "sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg=="
-  "resolved" "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.8.tgz"
-  "version" "4.2.8"
+  "integrity" "sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ=="
+  "resolved" "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.9.tgz"
+  "version" "4.2.9"
 
 "graceful-readlink@>= 1.0.0":
   "integrity" "sha1-TK+tdrxi8C+gObL5Tpo906ORpyU="
@@ -2827,20 +2827,20 @@
     "request" "^2.88.0"
     "request-promise" "^4.2.2"
 
-"nodemon@^2.0.13":
-  "integrity" "sha512-UMXMpsZsv1UXUttCn6gv8eQPhn6DR4BW+txnL3IN5IHqrCwcrT/yWHfL35UsClGXknTH79r5xbu+6J1zNHuSyA=="
-  "resolved" "https://registry.npmjs.org/nodemon/-/nodemon-2.0.13.tgz"
-  "version" "2.0.13"
+"nodemon@^2.0.15":
+  "integrity" "sha512-gdHMNx47Gw7b3kWxJV64NI+Q5nfl0y5DgDbiVtShiwa7Z0IZ07Ll4RLFo6AjrhzMtoEZn5PDE3/c2AbVsiCkpA=="
+  "resolved" "https://registry.npmjs.org/nodemon/-/nodemon-2.0.15.tgz"
+  "version" "2.0.15"
   dependencies:
-    "chokidar" "^3.2.2"
-    "debug" "^3.2.6"
+    "chokidar" "^3.5.2"
+    "debug" "^3.2.7"
     "ignore-by-default" "^1.0.1"
     "minimatch" "^3.0.4"
-    "pstree.remy" "^1.1.7"
+    "pstree.remy" "^1.1.8"
     "semver" "^5.7.1"
     "supports-color" "^5.5.0"
     "touch" "^3.1.0"
-    "undefsafe" "^2.0.3"
+    "undefsafe" "^2.0.5"
     "update-notifier" "^5.1.0"
 
 "nopt@~1.0.10":
@@ -3085,9 +3085,9 @@
   "version" "2.9.3"
 
 "picomatch@^2.0.4", "picomatch@^2.2.1":
-  "integrity" "sha512-lY1Q/PiJGC2zOv/z391WOTD+Z02bCgsFfvxoXXf6h7kv9o+WmsmzYqrAwY63sNgOxE4xEdq0WyUnXfKeBrSvYw=="
-  "resolved" "https://registry.npmjs.org/picomatch/-/picomatch-2.3.0.tgz"
-  "version" "2.3.0"
+  "integrity" "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA=="
+  "resolved" "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz"
+  "version" "2.3.1"
 
 "pixelmatch@^4.0.2":
   "integrity" "sha1-j0fc7FARtHe2fbA8JDvB8wheiFQ="
@@ -3190,7 +3190,7 @@
   "resolved" "https://registry.npmjs.org/psl/-/psl-1.8.0.tgz"
   "version" "1.8.0"
 
-"pstree.remy@^1.1.7":
+"pstree.remy@^1.1.8":
   "integrity" "sha512-77DZwxQmxKnu3aR542U+X8FypNzbfJ+C5XQDk3uWjWxn6151aIMGthWYRXTqT1E5oJvg+ljaa2OJi+VfvCOQ8w=="
   "resolved" "https://registry.npmjs.org/pstree.remy/-/pstree.remy-1.1.8.tgz"
   "version" "1.1.8"
@@ -3270,13 +3270,6 @@
     "loose-envify" "^1.1.0"
     "object-assign" "^4.1.1"
     "scheduler" "^0.20.2"
-
-"react-geocode@^0.2.3":
-  "integrity" "sha512-sIpbgmn1IUzAxO4haOZ6jeeFnMD8ya9PC38yiNrmJ9vPWbvAO2D/2yfCBzZjGZVUm4PRzKAc0KghXfaEnug0TQ=="
-  "resolved" "https://registry.npmjs.org/react-geocode/-/react-geocode-0.2.3.tgz"
-  "version" "0.2.3"
-  dependencies:
-    "regenerator-runtime" "^0.13.3"
 
 "react-highlight-within-textarea@^2.1.2":
   "integrity" "sha512-rXcf+1mCgp0+5FNanxmKiXx2nMraVpk8QZpzeu7oJBKZfaK+Na9ItNcxnmUP1f5uzfDqMI2EURpcfmxOZ1uXlQ=="
@@ -3603,9 +3596,9 @@
   "version" "13.5.2"
 
 "signal-exit@^3.0.2":
-  "integrity" "sha512-KWcOiKeQj6ZyXx7zq4YxSMgHRlod4czeBQZrPb8OKcohcqAXShm7E20kEMle9WBt26hFcAf0qLOcp5zmY7kOqQ=="
-  "resolved" "https://registry.npmjs.org/signal-exit/-/signal-exit-3.0.5.tgz"
-  "version" "3.0.5"
+  "integrity" "sha512-sDl4qMFpijcGw22U5w63KmD3cZJfBuFlVNbVMKje2keoKML7X2UzWbc4XrmEbDwg0NXJc3yv4/ox7b+JWb57kQ=="
+  "resolved" "https://registry.npmjs.org/signal-exit/-/signal-exit-3.0.6.tgz"
+  "version" "3.0.6"
 
 "sliced@1.0.1":
   "integrity" "sha1-CzpmK10Ewxd7GSa+qCsD+Dei70E="
@@ -3959,7 +3952,7 @@
     "has-symbols" "^1.0.2"
     "which-boxed-primitive" "^1.0.2"
 
-"undefsafe@^2.0.3":
+"undefsafe@^2.0.5":
   "integrity" "sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA=="
   "resolved" "https://registry.npmjs.org/undefsafe/-/undefsafe-2.0.5.tgz"
   "version" "2.0.5"
