@@ -2,7 +2,7 @@ const NodeGeocoder = require('node-geocoder');
 
 const options = {
   provider: 'google',
-Mapquest, OpenCage, Google Premier
+  apiKey: 'AIzaSyCAa8ZgPpTBMcCV7lrNJXvE70JoRs9Wl8I', // for Mapquest, OpenCage, Google Premier
   formatter: null // 'gpx', 'string', ...
 };
 

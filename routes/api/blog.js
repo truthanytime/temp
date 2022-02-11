@@ -58,7 +58,9 @@ ipfsadd = async (
     }
     var thumb = 'https://troo.live/thumbs/' + thumbnailname;
     const address = await geocoder.reverse({ lat: gpsoutput.latitude, lon: gpsoutput.longitude });
-    console.log("geoaddress", address[0].formattedAddress);
+    // console.log("geoaddress", address[0].formattedAddress);
+    // console.log(222, address[0].city)
+    // console.log(222, address[0].country)
 
     if (!blog) {
       const newBlog = new Blog({
@@ -73,7 +75,7 @@ ipfsadd = async (
         price: saleoption,
         lat: gpsoutput.latitude,
         lng: gpsoutput.longitude,
-        address: address[0].formattedAddress,
+        address: address[0].city + ", " + address[0].country,
         phonemodel: phonemodel
       });
       await newBlog.save();
@@ -332,7 +334,7 @@ router.post("/myfeed/:type/", auth, async (req, res) => {
   try {
     switch (type) {
       case "picture":
-        blogs = await Blog.find({ filetype: "image", creator: userId, description: { $regex: skey } }, undefined, { skip, limit: 5 }).sort({ date: -1 });
+        blogs = await Blog.find({ filetype: "image", creator: userId, description: { $regex: skey } }, undefined, { skip }).sort({ date: -1 });
         break;
       case "popular":
         blogs = await Blog.aggregate([
@@ -358,16 +360,16 @@ router.post("/myfeed/:type/", auth, async (req, res) => {
         ]);
         break;
       case "video":
-        blogs = await Blog.find({ filetype: "vide", creator: userId, description: { $regex: skey } }, undefined, { skip, limit: 5 }).sort({ date: -1 });
+        blogs = await Blog.find({ filetype: "vide", creator: userId, description: { $regex: skey } }, undefined, { skip }).sort({ date: -1 });
         break;
       case "all":
-        blogs = await Blog.find({ creator: userId, description: { $regex: skey } }, undefined, { skip, limit: 5 }).sort({ date: -1 });
+        blogs = await Blog.find({ creator: userId, description: { $regex: skey } }, undefined, { skip }).sort({ date: -1 });
         break;
       case "Likes":
-        blogs = await Blog.find({ creator: userId, likes: { $elemMatch: { user: req.user.id } }, description: { $regex: skey } }, undefined, { skip, limit: 5 }).sort({ date: -1 });
+        blogs = await Blog.find({ creator: userId, likes: { $elemMatch: { user: req.user.id } }, description: { $regex: skey } }, undefined, { skip }).sort({ date: -1 });
         break;
       default:
-        blogs = await Blog.find({ filetype: "video", creator: userId, description: { $regex: skey } }, undefined, { skip, limit: 5 }).sort({ date: -1 });
+        blogs = await Blog.find({ filetype: "video", creator: userId, description: { $regex: skey } }, undefined, { skip }).sort({ date: -1 });
     }
     res.json(blogs);
   } catch (err) {
