@@ -1,0 +1,26 @@
+/* Myfeed */
+.navbarArea li {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.profileImage {
+    min-width: 100% !important;
+}
+.modal{
+    background: transparent;
+    width: 200px;
+    height: 200px;
+}
+.profilelink {
+    color:inherit;
+}
+.profilelink:hover {
+    color:inherit;
+    border-bottom: 1px solid white;
+}
+._Name:hover {
+    color:white;
+    cursor: pointer;
+}

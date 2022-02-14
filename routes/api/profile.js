@@ -109,7 +109,7 @@ router.post("/", auth, async (req, res, next) => {
           //   if (err) console.log(err);
           // });
         });
-        profile.avatar = "https://troo.live/avatar/" + req.user.id + ".jpg";
+        profile.avatar = "http://localhost:4000/avatar/" + req.user.id + ".jpg";
       }
       if (req.body.avatarMain == undefined) {
         avatarMain = req.files.avatarMain;
@@ -124,7 +124,7 @@ router.post("/", auth, async (req, res, next) => {
           //   if (err) console.log(err);
           // });
         });
-        // profile.avatar = "https://troo.live/avatar/" + req.user.id + ".jpg";
+        // profile.avatar = "http://localhost:4000/avatar/" + req.user.id + ".jpg";
       }
       if (req.body.backimage == undefined) {
         backimage = req.files.backimage;
@@ -143,7 +143,7 @@ router.post("/", auth, async (req, res, next) => {
           //   if (err) console.log(err);
           // });
         });
-        profile.backimg = "https://troo.live/backimg/" + req.user.id + ".jpg";
+        profile.backimg = "http://localhost:4000/backimg/" + req.user.id + ".jpg";
       }
       if (req.body.backimagemain == undefined) {
         backimagemain = req.files.backimagemain;
@@ -163,7 +163,7 @@ router.post("/", auth, async (req, res, next) => {
           //   if (err) console.log(err);
           // });
         });
-        // profile.backimg = "https://troo.live/backimg/" + req.user.id + ".jpg";
+        // profile.backimg = "http://localhost:4000/backimg/" + req.user.id + ".jpg";
       }
       profile.name = name;
       profile.bio = bio;

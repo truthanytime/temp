@@ -1,0 +1,87 @@
+.main{
+    transition: 0.5s;
+    margin-left: 30px;
+}
+.main.active{
+    left: 80px;
+}
+.hsdropdown{
+    position: relative;
+    margin-top: 10px;
+    width: 200px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hsdropdown::before{
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid #fff;
+    border-right: 2px solid #fff;
+    transform: rotate(-45deg);
+    right: 20px;
+    z-index: 1;
+    transition: 0.5s;
+    pointer-events: none;
+}
+.hsdropdown.active::before{
+    transform: rotate(-225deg);
+}
+.textBox.active {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom: none;
+}
+.textBox {
+    display: flex;
+    align-items: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    padding: 12px 20px;
+    border-radius: 10px;
+    background-color: #2e3234;
+    color: white;
+    border: 1px solid white;
+
+}
+.hsdropdown .option{
+    position: absolute;
+    top: 50px;
+    width: 100%;
+    background-color: #2e3234;
+    border-radius: 10px;
+    overflow: hidden;
+    display: none;
+    color: white;
+    border: 1px solid white;
+}
+.option.active {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+.hsdropdown.active .option{
+    display: block;
+}
+
+.hsc {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: flex-end;
+}
+.hsdropdown .option div{
+    display: flex;
+    align-items: center;
+    padding: 7px 20px;
+    cursor: pointer;
+}
+.hsdropdown .option div:hover{
+    background: #3a3d3f;
+    color: var(--white);
+}
