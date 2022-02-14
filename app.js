@@ -47,19 +47,19 @@ app.use("/api/create-payment-intent", require("./routes/api/stripepayment"));
 // Serve frontend built
 app.use(express.static("public"));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
-})
+// app.get('*', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+// })
 
 // Serve static assets in production
-if (process.env.NODE_ENV === "production") {
-  // Set static folder
-  app.use(express.static("client/build"));
+// if (process.env.NODE_ENV === "production") {
+//   // Set static folder
+//   app.use(express.static("client/build"));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-  });
-}
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+//   });
+// }
 
 // error handler
 // app.use(function(err, req, res, next) {
