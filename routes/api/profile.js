@@ -36,6 +36,17 @@ router.post("/viewProfile", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 })
+
+router.post("/checkusername", auth, async (req, res) => {
+  try {
+    const profile = await User.findOne({ name: req.body.username });
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+})
+
 router.post("/:id", auth, checkObjectId("id"), async (req, res) => {
   try {
     const profile = await Profile.findOne({ user: req.params.id });
@@ -86,7 +97,6 @@ router.put("/follow/:id", auth, checkObjectId("id"), async (req, res) => {
 });
 
 router.post("/", auth, async (req, res, next) => {
-  console.log('dirname', dirname);
   try {
     let profile = await Profile.findOne({ user: req.user.id });
     if (profile) {
@@ -109,7 +119,7 @@ router.post("/", auth, async (req, res, next) => {
           //   if (err) console.log(err);
           // });
         });
-        profile.avatar = "https://troo.live/avatar/" + req.user.id + ".jpg";
+        profile.avatar = "http://localhost:4000/avatar/" + req.user.id + ".jpg";
       }
       if (req.body.avatarMain == undefined) {
         avatarMain = req.files.avatarMain;
@@ -124,7 +134,7 @@ router.post("/", auth, async (req, res, next) => {
           //   if (err) console.log(err);
           // });
         });
-        // profile.avatar = "https://troo.live/avatar/" + req.user.id + ".jpg";
+        // profile.avatar = "http://localhost:4000/avatar/" + req.user.id + ".jpg";
       }
       if (req.body.backimage == undefined) {
         backimage = req.files.backimage;
@@ -143,11 +153,10 @@ router.post("/", auth, async (req, res, next) => {
           //   if (err) console.log(err);
           // });
         });
-        profile.backimg = "https://troo.live/backimg/" + req.user.id + ".jpg";
+        profile.backimg = "http://localhost:4000/backimg/" + req.user.id + ".jpg";
       }
       if (req.body.backimagemain == undefined) {
         backimagemain = req.files.backimagemain;
-        console.log(backimagemain);
         const backimgname = `${dirname}/public/backimg/` + req.user.id + `.jpg` + `main`;
         await backimagemain.mv(`${backimgname}`, async (err) => {
           if (err) {
@@ -163,7 +172,7 @@ router.post("/", auth, async (req, res, next) => {
           //   if (err) console.log(err);
           // });
         });
-        // profile.backimg = "https://troo.live/backimg/" + req.user.id + ".jpg";
+        // profile.backimg = "http://localhost:4000/backimg/" + req.user.id + ".jpg";
       }
       profile.name = name;
       profile.bio = bio;

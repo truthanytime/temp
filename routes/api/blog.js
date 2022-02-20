@@ -56,7 +56,7 @@ ipfsadd = async (
     if (filetype == "video") {
       await takescreenshot(markedfile, thumbnailname);
     }
-    var thumb = 'https://troo.live/thumbs/' + thumbnailname;
+    var thumb = 'http://localhost:4000/thumbs/' + thumbnailname;
     const address = await geocoder.reverse({ lat: gpsoutput.latitude, lon: gpsoutput.longitude });
     // console.log("geoaddress", address[0].formattedAddress);
     // console.log(222, address[0].city)
@@ -434,18 +434,26 @@ router.post('/byhashtag', auth, async (req, res) => {
   }
 });
 router.put("/edit/:id", auth, async (req, res) => {
-  console.log(req.params.id);
-  console.log(req.body.description);
   let blog_id = mongoose.Types.ObjectId(req.params.id);
   Blog.findByIdAndUpdate(blog_id, { description: req.body.description }, function (err, result) {
-
     if (err) {
       res.send(err)
     }
     else {
       res.send(result)
     }
-
+  })
+});
+router.put("/donate", auth, async (req, res) => {
+  const user = await User.findOne({ _id: req.body.userid });
+  const creator = await User.findOne({ _id: req.body.creatorid });
+  let plustcoin = Number(creator.vcoin) + Number(req.body.tcoin);
+  let newvalue = user.vcoin - req.body.tcoin;
+  User.findByIdAndUpdate(req.body.creatorid, { vcoin: Math.round(plustcoin * 100) / 100 }, function (err, result) {
+    if (err) { console.log(err); } else { console.log("Successfully sent to " + creator.pname); }
+  })
+  User.findByIdAndUpdate(req.body.userid, { vcoin: Math.round(newvalue * 100) / 100 }, function (err, result) {
+    if (err) { res.send(err) } else { res.send(result) }
   })
 });
 router.put("/like/:id", auth, checkObjectId("id"), async (req, res) => {
