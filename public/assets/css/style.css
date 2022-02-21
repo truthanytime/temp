@@ -1442,10 +1442,47 @@
 .theme-dark .navigation .nav-content ul li:not(.logo) a span {
   color: #ddd;
 }
+.theme-light .revertcoincolor {
+  border: none;
+  background-color: #f5f5f5;
+}
 .revertcolor{
   color:#000;
 }
 .theme-dark .revertcolor {
+  color: #fff;
+}
+.revertbgcolor {
+  background-color: #fff;
+  border: 1px solid #000;
+}
+.revertcolor::before {
+  border-top: 2px solid #2e3234;
+  border-right: 2px solid #2e3234;
+}
+.theme-dark .revertcolor::before {
+  border-top: 2px solid #fff;
+  border-right: 2px solid #fff;
+}
+.theme-dark .revertbgcolor {
+  background-color: #2e3234;
+  color: #fff;
+  border: 1px solid #fff;
+}
+.theme-dark .hsdropdown .option {
+  background-color: #2e3234;
+  border: 1px solid #fff;
+}
+.theme-dark .hsdropdown .option div:hover {
+  background: #3a3d3f;
+}
+.hsdropdown .option div:hover {
+  background: #dee0e2;
+}
+.reverticoncolor {
+  color: #000;
+}
+.theme-dark .reverticoncolor {
   color: #fff;
 }
 .addhash{
