@@ -8,7 +8,7 @@ const mailGenerator = new MailGen({
   theme: 'salted',
   product: {
     name: 'Troo App',
-    link: 'https://troo.live:4000',
+    link: 'https://troo.live',
     copyright: 'Copyright © 2021 troo. All rights reserved.',
   }
 });
@@ -26,7 +26,7 @@ const sendMail = (username, recipient, code) => {
         //   button: {
         //     color: '#33b5e5',
         //     text: 'Verify account',
-        //     link: 'https://troo.live:4000/verify_account'
+        //     link: 'https://troo.live/verify_account'
         //   }
         // }
       }
