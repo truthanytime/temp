@@ -111,6 +111,10 @@ const BlogSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now,
+  },
+  cdate: {
+    type: Date,
+    default: Date.now,
   }
 });
 module.exports = mongoose.model("Blog", BlogSchema);

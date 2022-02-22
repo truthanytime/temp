@@ -41,7 +41,8 @@ ipfsadd = async (
   filetype,
   gpsoutput,
   phonemodel,
-  saleoption
+  saleoption,
+  createdate
 ) => {
   try {
     const file1 = fs.readFileSync(originfile);
@@ -76,7 +77,8 @@ ipfsadd = async (
         lat: gpsoutput.latitude,
         lng: gpsoutput.longitude,
         address: address[0].city + ", " + address[0].country,
-        phonemodel: phonemodel
+        phonemodel: phonemodel,
+        cdate: createdate
       });
       await newBlog.save();
 
@@ -163,7 +165,7 @@ router.post("/", auth, async (req, res, next) => {
       ffmpeg.ffprobe(
         `${dirname}/public/${req.files.file.name}`,
         async function (err, metadata) {
-          // console.log(metadata);
+          // console.log(111, metadata.format.tags.creation_time);
           var meta = metadata.format.tags["com.apple.quicktime.location.ISO6709"];
           var model = metadata.format.tags["com.apple.quicktime.model"];
           var creationtime = metadata.format.tags["creation_time"];
@@ -184,7 +186,7 @@ router.post("/", auth, async (req, res, next) => {
               }
               phonemodel = phonemodel + model[i];
             }
-            console.log("model", phonemodel);
+            var createdate = metadata.format.tags.creation_time;
             for (var i = 0; i < meta.length; i++) {
               if (meta[i] == "+" || meta[i] == "-") {
                 if (index == 1) {
@@ -206,7 +208,8 @@ router.post("/", auth, async (req, res, next) => {
               gpsoutput,
               phonemodel,
               creationtime,
-              req.body.saleoption
+              req.body.saleoption,
+              createdate
             ).then((metadataUrl) => {
               if (metadataUrl === false) res.send("existing");
               else if (metadataUrl === "error") res.send("failure");
@@ -216,7 +219,6 @@ router.post("/", auth, async (req, res, next) => {
         }
       );
     } else if (mediafile.mimetype.indexOf("image") !== -1) {
-      // console.log(111, req.body.hs);
       const file1 = fs.readFileSync(`${dirname}/public/${req.files.file.name}`);
       var gpsoutput = await exifr.gps(file1);
       if (gpsoutput == undefined) return res.send("invalid");
@@ -226,6 +228,7 @@ router.post("/", auth, async (req, res, next) => {
           LOGO
         );
         var meta = await exifr.parse(file1);
+        // console.log(111, meta.CreateDate);
         var spaceindex = 0;
         var phonemodel = '';
         for (var i = 0; i < meta.Model.length; i++) {
@@ -235,7 +238,8 @@ router.post("/", auth, async (req, res, next) => {
           }
           phonemodel = phonemodel + meta.Model[i];
         }
-        console.log("phonemodel", phonemodel);
+        var createdate = meta.CreateDate;
+        // console.log("phonemodel", phonemodel);
         await image.writeAsync(`${dirname}/public/21vixresult.jpg`);
         metadataUrl = ipfsadd(
           `${dirname}/public/${req.files.file.name}`,
@@ -246,7 +250,8 @@ router.post("/", auth, async (req, res, next) => {
           "image",
           gpsoutput,
           phonemodel,
-          req.body.saleoption
+          req.body.saleoption,
+          createdate
         ).then((metadataUrl) => {
           if (metadataUrl === false) res.send("existing");
           else if (metadataUrl === true) res.send("success");
