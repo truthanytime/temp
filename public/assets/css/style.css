@@ -8741,6 +8741,10 @@ textarea.form-control-lg {
   padding-left: 3rem !important;
 }
 
+.border-real-white {
+  border: 1px solid white !important;
+}
+
 .font-monospace {
   font-family: var(--bs-font-monospace) !important;
 }
