@@ -76,7 +76,7 @@ ipfsadd = async (
         price: saleoption,
         lat: gpsoutput.latitude,
         lng: gpsoutput.longitude,
-        address: address[0].city + ", " + address[0].country,
+        address: address[0].administrativeLevels.level2long + ", " + address[0].country,
         phonemodel: phonemodel,
         cdate: createdate
       });
@@ -127,7 +127,7 @@ takescreenshot = (file, thumbnailname) => {
         console.log('an error happened: ' + err.message);
         return reject(err);
       })
-      .takeScreenshots({ count: 1, timemarks: ['00:00:01.000'], filename: thumbnailname, size: '320x210' }, "client/thumbs/");
+      .takeScreenshots({ count: 1, timemarks: ['00:00:01.000'], filename: thumbnailname, size: '320x210' }, "public/thumbs/");
   });
 }
 videomark = (file) => {
@@ -165,12 +165,10 @@ router.post("/", auth, async (req, res, next) => {
       ffmpeg.ffprobe(
         `${dirname}/public/${req.files.file.name}`,
         async function (err, metadata) {
-          // console.log(111, metadata.format.tags.creation_time);
           var meta = metadata.format.tags["com.apple.quicktime.location.ISO6709"];
           var model = metadata.format.tags["com.apple.quicktime.model"];
-          var creationtime = metadata.format.tags["creation_time"];
-          console.log(creationtime);
-          if (meta == undefined || model == undefined || creationtime == undefined) return res.send("invalid");
+          var createdate = metadata.format.tags["creation_time"];
+          if (meta == undefined || model == undefined || createdate == undefined) return res.send("invalid");
           else {
             await videomark(`${dirname}/public/${req.files.file.name}`);
             var result = "";
@@ -204,10 +202,10 @@ router.post("/", auth, async (req, res, next) => {
               `${dirname}/public/21vixresult.mp4`,
               req.user.id,
               req.body.desc,
+              req.body.hs,
               "video",
               gpsoutput,
               phonemodel,
-              creationtime,
               req.body.saleoption,
               createdate
             ).then((metadataUrl) => {
@@ -286,18 +284,36 @@ router.get("/", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-router.post("/myfeed", auth, async (req, res) => {
-  const followinglist = req.body.myfollowing;
-  const id = req.body.id;
-  let followingusers = followinglist.map(follwing => {
-    return follwing.user;
-  });
+router.get("/rmAlldata", auth, async (req, res) => {
   try {
-    let blogs;
-    if (id == undefined)
-      blogs = await Blog.find({ $or: [{ creator: req.user.id }, { creator: { $in: followingusers } }] }).sort({ date: -1 });
-    else
-      blogs = await Blog.find({ _id: id }).sort({ date: -1 });
+    const blog = await Blog.find().sort({ date: -1 });
+    res.json(blog);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.post("/myfeed", auth, async (req, res) => {
+  // const followinglist = req.body.myfollowing;
+  // const id = req.body.id;
+  // let followingusers = followinglist.map(follwing => {
+  //   return follwing.user;
+  // });
+  // try {
+  //   let blogs;
+  //   if (id == undefined)
+  //     blogs = await Blog.find({ $or: [{ creator: req.user.id }, { creator: { $in: followingusers } }] }).sort({ date: -1 });
+  //   else
+  //     blogs = await Blog.find({ _id: id }).sort({ date: -1 });
+  //   res.json(blogs);
+  // } catch (err) {
+  //   console.error(err.message);
+  //   res.status(500).send("Server Error");
+  // }
+  const skey = req.query.skey ? req.query.skey : "";
+  const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
+  try {
+    const blogs = await Blog.find({ description: { $regex: skey }, saveusers: { $elemMatch: { user: req.user.id } } }, undefined, { skip, limit: 5 }).sort({ date: -1 });
     res.json(blogs);
   } catch (err) {
     console.error(err.message);
@@ -313,7 +329,16 @@ router.get("/:id", auth, checkObjectId("id"), async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-router.post("/mysave/", auth, async (req, res) => {
+router.post("/:id", auth, checkObjectId("id"), async (req, res) => {
+  try {
+    const blogs = await Blog.findOneAndDelete({ _id: req.params.id }).sort({ date: -1 });
+    res.json(blogs);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+router.post("/mysave", auth, async (req, res) => {
   const skey = req.query.skey ? req.query.skey : "";
   const skip = req.query.skip && /^\d+$/.test(req.query.skip) ? Number(req.query.skip) : 0;
   try {
@@ -365,7 +390,7 @@ router.post("/myfeed/:type/", auth, async (req, res) => {
         ]);
         break;
       case "video":
-        blogs = await Blog.find({ filetype: "vide", creator: userId, description: { $regex: skey } }, undefined, { skip }).sort({ date: -1 });
+        blogs = await Blog.find({ filetype: "video", creator: userId }).sort({ date: -1 });
         break;
       case "all":
         blogs = await Blog.find({ creator: userId, description: { $regex: skey } }, undefined, { skip }).sort({ date: -1 });

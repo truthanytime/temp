@@ -9,7 +9,7 @@ const mailGenerator = new MailGen({
   product: {
     name: 'Troo App',
     link: 'https://troo.live',
-    copyright: 'Copyright © 2021 troo. All rights reserved.',
+    copyright: 'Copyright © 2021 Troo. All rights reserved.',
   }
 });
 const sendMail = (username, recipient, code) => {
@@ -19,7 +19,7 @@ const sendMail = (username, recipient, code) => {
         greeting: 'Dear',
         // signature: ['Best Regards','\ntroo Support Team'],
         name: username,
-        intro: ['Welcome to email verification!', 'To complete SignUp at Troo, please enter this code:', code],
+        intro: ['Thanks for joining the Troo.', 'Please enter the following one-time code to login your account. This code will expire in 5 mins.', code],
         // outro: ['Need help, or have questions?', 'Just reply to this email, we\'d love to help.'],
         // action: {
         //   instructions: 'You can verify your account to click the button below',

@@ -128,10 +128,11 @@
   background-color: rgba(0, 0, 0, 0.9);
 }
 .theme-dark .card {
-  background-color: #343a40 !important;
+  background-color: black !important;
+  border-radius: 0px;
 }
 .theme-dark .app-footer {
-  background-color: #293145 !important;
+  background-color: black !important;
   border-top: 0;
 }
 .theme-dark .app-footer i {
@@ -1004,6 +1005,10 @@
   line-height: 2;
 }
 
+.lh-15 {
+  line-height: 15px;
+}
+
 .lh-16 {
   line-height: 16px !important;
 }
@@ -1154,10 +1159,6 @@
 
 .border-dashed {
   border: 2px #ddd dashed !important;
-}
-
-.border-black {
-  border: 2px #000 dashed !important;
 }
 
 .border-top-lg {
@@ -1585,8 +1586,11 @@
 .theme-dark .header-wrapper .logo {
   color: lightsteelblue;
 }
-.theme-dark .card p {
-  color: #ddd !important;
+.theme-dark .card p,.theme-dark .card a {
+  font-size: 12px;
+}
+.card p {
+  font-size: 12px;
 }
 .theme-dark .accordion .card button:after,
 .theme-dark .accordion .card button,
@@ -8064,7 +8068,7 @@ textarea.form-control-lg {
 }
 
 .border-white {
-  border-color: #fff !important;
+  border: 1px solid #080809;
 }
 
 .border-1 {
@@ -16722,6 +16726,10 @@ select.sort {
   transform-origin: 0px 10.2px;
   -webkit-animation: loading 2s infinite ease;
   animation: loading 2s infinite ease;
+}
+
+.headerborder {
+  border: 2px solid;
 }
 
 @keyframes loading {
