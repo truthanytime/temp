@@ -22,11 +22,11 @@
 .spaceArea {
   width: 5%;
 }
-.photoArea>.reactEasyCrop_Container {
+/* .photoArea>.reactEasyCrop_Container {
   min-width: 300px !important;
   min-height: 300px !important;
   border-radius: 50% !important;
-}
+} */
 .photoArea>.reactEasyCrop_Container>.reactEasyCrop_CropArea {
   min-width: 300px !important;
   min-height: 300px !important;
