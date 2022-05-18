@@ -1,3 +1,4 @@
+const { boolean } = require("joi");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -22,6 +23,10 @@ const BlogSchema = new mongoose.Schema({
   filetype: {
     type: String,
     required: true,
+  },
+  pixstatus: {
+    type:Boolean,
+    required:true,
   },
   replyTo: {
     type: Schema.Types.ObjectId,
@@ -109,6 +114,10 @@ const BlogSchema = new mongoose.Schema({
     required: true,
   },
   date: {
+    type: Date,
+    default: Date.now,
+  },
+  cdate: {
     type: Date,
     default: Date.now,
   }
